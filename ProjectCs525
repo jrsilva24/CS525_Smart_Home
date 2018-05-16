@@ -5,9 +5,53 @@ use ieee.std_logic_arith.all;
 
 entity project is
     port(
+	 clock, enable: in std_logic;
    	 l1,l2,l3,l4,clock,enable: in std_logic;
 	 l5: in std_logic_vector (6 downto 0);
    	 fdoor,rdoor,win,alarm,heater,cooler: out std_logic;
 	 disp: out std_logic_vector (2 downto 0)
+	 
     );
 end project;
+
+architecture house_control of project is
+begin
+	process (enable, clock)
+	begin
+		if not(enable = '1') then
+			fdoor <= 0;
+			rdoor <= 0;
+			win <= 0;
+			alarm <= 0;
+			heater <= 0;
+			clooer <= 0;
+		end if;
+		
+		if (l1 = '1') then
+			fdoor <= 1;
+		else
+			fdoor <= 0;
+		end if;
+		
+		if (l2 = '1') then
+			rdoor <= 1;
+		else
+			rdoor <= 0;
+		end if;
+		
+		if (l3 = '1') then
+			win <= 1;
+		else
+			win <= 0;
+		end if;
+		
+		if (l4 = '1') then
+			alarm <= 1;
+		else
+			alarm <= 0;
+		end if;
+		
+	end process;
+
+	
+end house_control;
