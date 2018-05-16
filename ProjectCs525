@@ -1,0 +1,13 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use ieee.std_logic_arith.all;
+
+
+entity project is
+    port(
+   	 l1,l2,l3,l4,clock,enable: in std_logic;
+	 l5: in std_logic_vector (6 downto 0);
+   	 fdoor,rdoor,win,alarm,heater,cooler: out std_logic;
+	 disp: out std_logic_vector (2 downto 0)
+    );
+end project;
