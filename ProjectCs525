@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use ieee.std_logic_arith.all;
-
+USE ieee.numeric_std.ALL;
 
 entity project is
     port(
@@ -15,16 +15,19 @@ entity project is
 end project;
 
 architecture house_control of project is
+signal temp : unsigned (6 downto 0);
+signal check : std_logic;
 begin
 	process (enable, clock)
 	begin
+		check = '0';
 		if not(enable = '1') then
 			fdoor <= 0;
 			rdoor <= 0;
 			win <= 0;
 			alarm <= 0;
 			heater <= 0;
-			clooer <= 0;
+			cooler <= 0;
 		end if;
 		
 		if (l1 = '1') then
@@ -51,6 +54,73 @@ begin
 			alarm <= 0;
 		end if;
 		
+		temp <= to_integer(unsigned(l5));
+		
+		if (temp < "0110010")
+			heater < = 1;
+		else
+			heater < = 0;
+		end if;
+		if (temp > "1000110")
+			cooler <= 1;
+		else
+			cooler <= 0;
+		end if;
+		
+		if (check = '0')
+			case (fdoor) is
+				when ('1') =>
+					disp <= "001";
+					check = '1';
+				when ('0') => disp <= "000";
+				when others => disp <= "111";
+			end case;
+		end if;
+		if (check = '0')
+			case (rdoor) is
+				when ('1') => 
+					disp <= "010";
+					check = '1';
+				when ('0') => disp <= "000";
+				when others => disp <= "111";
+			end case;
+		end if;
+		if (check = '0')
+			case (win) is
+				when ('1') =>
+					disp <= "011";
+					check = '1';
+				wnen ('0') => disp <= "000";
+				when others => disp <= "111";
+			end case;
+		end if;	
+		if (check = '0')
+			case (alarm) is
+				when ('1') =>
+					disp <= "100";
+					check = '1';
+				when ('0') => disp <= "000";
+				when others => disp <= "111";
+			end case;
+		end if;
+		if (check = '0')
+			case (heater) is
+				when ('1') =>
+					disp <= "101";
+					check = '1';
+				when ('0') => disp <= "000";
+				when others => disp <= "111";
+			end case;
+		end if;
+		if (check = '0')
+			case (cooler) is
+				when ('1') =>
+					disp <= "110";
+					check = '1';
+				when ('0') => disp <= "000";
+				when others => disp <= "111";
+			end case;
+		end if;
 	end process;
 
 	
