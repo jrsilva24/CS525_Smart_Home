@@ -30,29 +30,12 @@ begin
 			cooler <= 0;
 		end if;
 		
-		if (l1 = '1') then
-			fdoor <= 1;
-		else
-			fdoor <= 0;
-		end if;
+	
+		fdoor <= l1;
+		rdoor <= l2;
+		win <= l3;
+		alarm <= l4;
 		
-		if (l2 = '1') then
-			rdoor <= 1;
-		else
-			rdoor <= 0;
-		end if;
-		
-		if (l3 = '1') then
-			win <= 1;
-		else
-			win <= 0;
-		end if;
-		
-		if (l4 = '1') then
-			alarm <= 1;
-		else
-			alarm <= 0;
-		end if;
 		
 		temp <= to_integer(unsigned(l5));
 		
@@ -61,6 +44,7 @@ begin
 		else
 			heater < = 0;
 		end if;
+		
 		if (temp > "1000110")
 			cooler <= 1;
 		else
