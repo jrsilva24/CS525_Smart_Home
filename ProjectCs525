@@ -1,123 +1,133 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use ieee.std_logic_arith.all;
-USE ieee.numeric_std.ALL;
+use IEEE.NUMERIC_STD.all;
 
 entity project is
     port(
 	 clock, enable: in std_logic;
-   	 l1,l2,l3,l4,clock,enable: in std_logic;
+   	 l1,l2,l3,l4: in std_logic;
 	 l5: in std_logic_vector (6 downto 0);
    	 fdoor,rdoor,win,alarm,heater,cooler: out std_logic;
-	 disp: out std_logic_vector (2 downto 0)
-	 
+	 disp: out std_logic_vector (2 downto 0) 
     );
 end project;
 
 architecture house_control of project is
-signal temp : unsigned (6 downto 0);
-signal check : std_logic;
+signal temp : integer range 0 to 127;
+signal check, fdoorSig, rdoorSig, winSig, alarmSig, heaterSig, coolerSig : std_logic;
 begin
 	process (enable, clock)
 	begin
-		check = '0';
+		check <= '0';
 		if not(enable = '1') then
-			fdoor <= 0;
-			rdoor <= 0;
-			win <= 0;
-			alarm <= 0;
-			heater <= 0;
-			cooler <= 0;
+			fdoor <= '0';
+			rdoor <= '0';
+			win <= '0';
+			alarm <= '0';
+			heater <= '0';
+			cooler <= '0';
 		end if;
 		
-		if (l1 = '1') then
-			fdoor <= 1;
+		if l1 = '1' then
+			fdoor <= '1';
+			fdoorSig <= '1';
 		else
-			fdoor <= 0;
+			fdoor <= '0';
+			fdoorSig <= '0';
 		end if;
 		
-		if (l2 = '1') then
-			rdoor <= 1;
+		if l2 = '1' then
+			rdoor <= '1';
+			rdoorSig <= '1';
 		else
-			rdoor <= 0;
+			rdoor <= '0';
+			rdoorSig <= '1';
 		end if;
 		
-		if (l3 = '1') then
-			win <= 1;
+		if l3 = '1' then
+			win <= '1';
+			winSig <= '1';
 		else
-			win <= 0;
+			win <= '0';
+			winSig <= '0';
 		end if;
 		
-		if (l4 = '1') then
-			alarm <= 1;
+		if l4 = '1' then
+			alarm <= '1';
+			alarmSig <= '1';
 		else
-			alarm <= 0;
+			alarm <= '0';
+			alarmSig <= '0';
 		end if;
 		
 		temp <= to_integer(unsigned(l5));
 		
-		if (temp < "0110010")
-			heater < = 1;
+		if temp < 50 then
+			heater <= '1';
+			heaterSig <= '1';
 		else
-			heater < = 0;
+			heater <= '0';
+			heaterSig <= '0';
 		end if;
-		if (temp > "1000110")
-			cooler <= 1;
+		if temp > 70 then
+			cooler <= '1';
+			coolerSig <= '1';
 		else
-			cooler <= 0;
+			cooler <= '0';
+			coolerSig <= '0';
 		end if;
 		
-		if (check = '0')
-			case (fdoor) is
-				when ('1') =>
+		if check = '0' then
+			case (fdoorSig) is
+				when '1' =>
 					disp <= "001";
-					check = '1';
-				when ('0') => disp <= "000";
+					check <= '1';
+				when '0' => disp <= "000";
 				when others => disp <= "111";
 			end case;
 		end if;
-		if (check = '0')
-			case (rdoor) is
-				when ('1') => 
+		if check = '0' then
+			case (rdoorSig) is
+				when '1' => 
 					disp <= "010";
-					check = '1';
-				when ('0') => disp <= "000";
+					check <= '1';
+				when '0' => disp <= "000";
 				when others => disp <= "111";
 			end case;
 		end if;
-		if (check = '0')
-			case (win) is
-				when ('1') =>
+		if check = '0' then
+			case (winSig) is
+				when '1' =>
 					disp <= "011";
-					check = '1';
-				wnen ('0') => disp <= "000";
+					check <= '1';
+				when '0' => disp <= "000";
 				when others => disp <= "111";
 			end case;
 		end if;	
-		if (check = '0')
-			case (alarm) is
-				when ('1') =>
+		if check = '0' then
+			case (alarmSig) is
+				when '1' =>
 					disp <= "100";
-					check = '1';
-				when ('0') => disp <= "000";
+					check <= '1';
+				when '0' => disp <= "000";
 				when others => disp <= "111";
 			end case;
 		end if;
-		if (check = '0')
-			case (heater) is
+		if check = '0' then
+			case (heaterSig) is
 				when ('1') =>
 					disp <= "101";
-					check = '1';
+					check <= '1';
 				when ('0') => disp <= "000";
 				when others => disp <= "111";
 			end case;
 		end if;
-		if (check = '0')
-			case (cooler) is
-				when ('1') =>
+		if check = '0' then
+			case (coolerSig) is
+				when '1' =>
 					disp <= "110";
-					check = '1';
-				when ('0') => disp <= "000";
+					check <= '1';
+				when '0' => disp <= "000";
 				when others => disp <= "111";
 			end case;
 		end if;
