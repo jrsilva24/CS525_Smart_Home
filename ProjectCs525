@@ -83,6 +83,7 @@ begin
 		if volDown = '1' then
 			volumeVal <= volumeVal - 1;
 		end if;
+
 		
 		if volumeVal > 10 then
 			volumeVal <= 10;
