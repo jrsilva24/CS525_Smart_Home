@@ -7,11 +7,11 @@ use IEEE.NUMERIC_STD.all;
 entity project is
     port(
 	 clock, enable: in std_logic;
-	 l1,l2,l3,l4,volUp,volDown: in std_logic;
+   	 l1,l2,l3,l4,volUp,volDown: in std_logic;
 	 l5: in std_logic_vector (6 downto 0);
-	 fdoor,rdoor,win,alarm,heater,cooler,emergencyCall: out std_logic;
+   	 fdoor,rdoor,win,alarm,heater,cooler,emergencyCall: out std_logic;
 	 disp: out std_logic_vector (2 downto 0); 
-	 volume: out std_logic_vector (0 downto 4)
+         volume: out std_logic_vector (3 downto 0)
     );
 end project;
 
@@ -24,7 +24,8 @@ signal fdoorSig, rdoorSig, winSig, alarmSig, heaterSig, coolerSig : std_logic;
 begin
 	process (enable, clock)
 	begin
-		temp <= to_integer(unsigned(l5));
+		dispVal <= 0;
+		temp <= to_integer (unsigned(l5));
 
 		if not(enable = '1') then
 			fdoor <= '0';
@@ -33,46 +34,29 @@ begin
 			alarm <= '0';
 			heater <= '0';
 			cooler <= '0';
-		end if;
-		
-		if l1 = '1' then
-			fdoor <= '1';
-			fdoorSig <= '1';
 		else
-			fdoor <= '0';
-			fdoorSig <= '0';
+			fdoor <= l1;
+			rdoor <= l2;
+			win <= l3;
+			alarm <=l4;
 		end if;
-		
-		if l2 = '1' then
-			rdoor <= '1';
-			rdoorSig <= '1';
-		else
-			rdoor <= '0';
-			rdoorSig <= '1';
-		end if;
-		
-		if l3 = '1' then
-			win <= '1';
-			winSig <= '1';
-		else
-			win <= '0';
-			winSig <= '0';
-		end if;
+
 		
 		if l4 = '1' then
 			alarm <= '1';
 			alarmSig <= '1';
-			if emergencyCounter = 300 then
-				emergencyCall <= '1';
-				emergencyCounter <= 300;
-			else
-				emergencyCounter <= emergencyCounter + 1;
-			end if;
+			--if emergencyCounter = 300 then
+				--emergencyCall <= '1';
+				--emergencyCounter <= 300;
+				
+			--else
+				--emergencyCounter <= emergencyCounter + 1;
+			--end if;
 		else
 			alarm <= '0';
 			alarmSig <= '0';
-			emergencyCall <= '0';
-			emergencyCounter <= 0;
+			--emergencyCall <= '0';
+			--emergencyCounter <= 0;
 		end if;
 					
 
@@ -83,7 +67,6 @@ begin
 		if volDown = '1' then
 			volumeVal <= volumeVal - 1;
 		end if;
-
 		
 		if volumeVal > 10 then
 			volumeVal <= 10;
@@ -109,23 +92,21 @@ begin
 			coolerSig <= '0';
 		end if;
 
-		dispVal <= 0;
-
-		if fdoorSig = '1' or rdoorSig = '1' or winSig = '1' then
+		if l1 = '1' then
 			dispVal <= dispVal + 1;
 		end if;
 
-		if alarmSig = '1' then
-			dispVal <= dispVal + 2;
-		end if;
+		--if alarmSig = '1' then
+		--	dispVal <= dispVal + 2;
+		--end if;
 
-		if heaterSig = '1' or coolerSig = '1' then
-			dispVal <= dispVal + 4;
-		end if;
-
-		volume <= std_logic_vector(to_unsigned(volumeVal, volume'length));
-		disp <= std_logic_vector(to_unsigned(dispVal, disp'length));
+		--if heaterSig = '1' then
+		--	dispVal <= dispVal + 4;
+		--end if;
 
 	end process;
+
+	volume <= std_logic_vector(to_unsigned(volumeVal, 4));
+	disp <= std_logic_vector(to_unsigned(dispVal, 3));
 
 end house_control;
