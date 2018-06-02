@@ -17,15 +17,16 @@ end project;
 
 architecture house_control of project is
 signal temp : integer range 0 to 127;
-signal dispVal: integer range 0 to 7;
 signal volumeVal: integer range 0 to 12;
 signal emergencyCounter: integer range 0 to 300;
-signal fdoorSig, rdoorSig, winSig, alarmSig, heaterSig, coolerSig : std_logic;
+signal heaterSig, coolerSig, openSig, alarmSig : std_logic;
 begin
 	process (enable, clock)
 	begin
-		dispVal <= 0;
 		temp <= to_integer (unsigned(l5));
+		disp <= "000";
+		openSig <= '0';
+		alarmSig <= '0';
 
 		if not(enable = '1') then
 			fdoor <= '0';
@@ -41,65 +42,78 @@ begin
 			alarm <=l4;
 		end if;
 
-		
-		if l4 = '1' then
-			alarm <= '1';
-			alarmSig <= '1';
-			if emergencyCounter = 300 then
-				emergencyCall <= '1';
-				emergencyCounter <= 300;
-				
-			else
-				emergencyCounter <= emergencyCounter + 1;
-			end if;
-		else
-			alarm <= '0';
-			alarmSig <= '0';
-			emergencyCall <= '0';
-			emergencyCounter <= 0;
-		end if;
+		if enable = '1' then
+			if l4 = '1' then
+				alarm <= '1';
+				if emergencyCounter = 300 then
+					emergencyCall <= '1';
+					emergencyCounter <= 300;
 					
+				else
+					emergencyCounter <= emergencyCounter + 1;
+				end if;
+			else
+				alarm <= '0';
+				emergencyCall <= '0';
+				emergencyCounter <= 0;
+			end if;
+						
 
-		if volUp = '1' and volumeVal < 10 then
-			volumeVal <= volumeVal + 1;
+			if volUp = '1' and volumeVal < 10 then
+				volumeVal <= volumeVal + 1;
+			end if;
+
+			if volDown = '1' and volumeVal > 0 then
+				volumeVal <= volumeVal - 1;
+			end if;
+			
+			
+			if temp < 50 then
+				heater <= '1';
+				heaterSig <= '1';
+			else
+				heater <= '0';
+				heaterSig <= '0';
+			end if;
+
+			if temp > 70 then
+				cooler <= '1';
+				coolerSig <= '1';
+			else
+				cooler <= '0';
+				coolerSig <= '0';
+			end if;
+			
+			if l1 = '1' or l2 = '1' or l3 = '1' then
+				openSig <= '1';
+				disp <= "001";
+			end if;
+
+			if l4 = '1' then
+				alarmSig <= '1';
+				if openSig = '1' then
+					disp <= "011";
+				else
+					disp <= "010";
+				end if;
+			end if;
+
+			if heaterSig = '1' or coolerSig = '1' then
+				disp <= "100";
+				if openSig = '1' and alarmSig = '1' then
+					disp <= "111";
+				else
+					if openSig = '1' then
+						disp <= "101";
+					end if;
+					if alarmSig = '1' then
+						disp <= "110";
+					end if;
+				end if;
+			end if;
 		end if;
-
-		if volDown = '1' and volumeVal > 0 then
-			volumeVal <= volumeVal - 1;
-		end if;
-		
-		
-		if temp < 50 then
-			heater <= '1';
-			heaterSig <= '1';
-		else
-			heater <= '0';
-			heaterSig <= '0';
-		end if;
-
-		if temp > 70 then
-			cooler <= '1';
-			coolerSig <= '1';
-		else
-			cooler <= '0';
-			coolerSig <= '0';
-		end if;
-
-		if l1 = '1' then
-			dispVal <= dispVal + 1;
-		end if;
-
-		--if alarmSig = '1' then
-		--	dispVal <= dispVal + 2;
-		--end if;
-
-		--if heaterSig = '1' then
-		--	dispVal <= dispVal + 4;
-		--end if;
-
 	end process;
 
 	volume <= std_logic_vector(to_unsigned(volumeVal, 4));
-	disp <= std_logic_vector(to_unsigned(dispVal, 3));
 
 end house_control;
