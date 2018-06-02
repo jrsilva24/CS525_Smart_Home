@@ -3,7 +3,6 @@ use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.all;
 
 
-
 entity project is
     port(
 	 clock, enable: in std_logic;
@@ -115,5 +114,5 @@ begin
 	end process;
 
 	volume <= std_logic_vector(to_unsigned(volumeVal, 4));
-
+  
 end house_control;
