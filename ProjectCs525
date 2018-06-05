@@ -15,14 +15,12 @@ entity project is
 end project;
 
 architecture house_control of project is
-signal temp : integer range 0 to 127;
 signal volumeVal: integer range 0 to 12;
 signal emergencyCounter: integer range 0 to 300;
 signal heaterSig, coolerSig, openSig, alarmSig : std_logic;
 begin
 	process (enable, clock)
 	begin
-		temp <= to_integer (unsigned(l5));
 		disp <= "000";
 		openSig <= '0';
 		alarmSig <= '0';
@@ -67,7 +65,7 @@ begin
 			end if;
 			
 			
-			if temp < 50 then
+			if to_integer(unsigned(l5)) < 50 then
 				heater <= '1';
 				heaterSig <= '1';
 			else
@@ -75,7 +73,7 @@ begin
 				heaterSig <= '0';
 			end if;
 
-			if temp > 70 then
+			if to_integer(unsigned(l5)) > 70 then
 				cooler <= '1';
 				coolerSig <= '1';
 			else
